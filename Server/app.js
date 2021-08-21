@@ -4,8 +4,13 @@
 const express = require('express');
 
 /* Express webserver locations */
-//import sequelize from './utils/database.js';
+const sequelize = require('./utils/database.js');
 //import router from './routes/routes.js';
+
+//Tables
+const User = require('./models/user')
+
+sequelize.sync({force:true})
 
 /* Setup the webserver*/
 const app = express();
