@@ -9,6 +9,13 @@ const sequelize = require('./utils/database.js');
 
 // Tables
 const User = require('./models/user.js')
+const ActiveDriver = require('./models/activeDriver.js')
+const ActiveRider = require('./models/activeRiders.js')
+const Destination = require('./models/destination.js')
+const History = require('./models/history.js')
+const Market = require('./models/market.js')
+const Rating = require('./models/rating.js')
+const Route = require('./models/route.js')
 
 sequelize.sync({force:true})
 
