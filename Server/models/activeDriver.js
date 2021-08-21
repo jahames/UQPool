@@ -1,9 +1,11 @@
 const Sequelize = require('sequelize')
 const User = require('/user')
+const Route = require('/route')
+const Destination = require('/destination')
   
 const sequelize = require('../utils/database')
   
-// Define User table
+// Define ActiveDriver table
 const ActiveDriver = sequelize.define('activeDriver', {
 
     /* Geolocation in Google API returns 
@@ -13,18 +15,15 @@ const ActiveDriver = sequelize.define('activeDriver', {
         "lng": -122.0851173
     },
     "accuracy": 120
-    }
-    */
-    currentLocation: { type: Sequelize.JSON, allowNull:false },
-
-    // Search with string in Google API
-    destination: { type: Sequelize.STRING, allowNull:false },
+    }*/
+    current_location: { type: Sequelize.JSON, allowNull:false },
 
     capacity: { type: Sequelize.INTEGER, allowNull:false },
-
-    routeId: { type: Sequelize.INTEGER, allowNull:false},
 })
 
-activeDriver.belongsTo(User, {foreignKey: 'driverId'})
+ActiveDriver.belongsTo(User, {foreignKey: 'driver_sid'})
+ActiveDriver.belongsTo(Destination, {foreignKey: 'destination_id'})
   
+ActiveDriver.hasOne(Route)
+
 module.exports = ActiveDriver
