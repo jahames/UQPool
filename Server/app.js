@@ -8,7 +8,7 @@ const sequelize = require('./utils/database.js');
 //import router from './routes/routes.js';
 
 // Tables
-const User = require('./models')
+const models = require('./models')
 
 sequelize.sync({force:true})
 
