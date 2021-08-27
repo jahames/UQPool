@@ -31,7 +31,7 @@ var connected = {};
 // Chat rooms for accepted pools 
 var pools = {};
 
-/* request section:
+/* Request section:
 These should reflect the state machine's side effects for
 login/registration
 booking
@@ -41,46 +41,47 @@ rating/review
 rewards
 */
 
-// registration section
-
+// Registration section
 app.post('/user', async(req, res) => {
-    await user.create(req.body, function (payload) {
+    user.create(req.body, function (payload) {
         res.send(payload);
     });
 });
 
 app.put('/user', async(req, res) => {
-    await user.update(req.body, function (payload) {
+    user.update(req.body, function (payload) {
         res.send(payload);
     });
 });
 
 app.delete('/user', async(req, res) => {
-    await user.delete(req.body.user, function (payload) {
+    user.delete(req.body.user, function (payload) {
         res.send(payload);
     });
 });
 
-    app.get('/users', async(req, res) => {
-        await user.users(req.body, function (payload) {
-            res.send(payload);
-        });
+app.get('/users', async(req, res) => {
+    user.users(req.body, function (payload) {
+        res.send(payload);
     });
+});
 
-/* History has only timestamp ATM, so not sure how a particular user can retrive a history of chats.
-    Needs rethinking
-    */
-        app.get('/history', async(req, res) => {
-            await user.history(req.body.user, function (payload) {
-                res.send(payload);
-            });
-        });
+// History section
+app.get('/history', async(req, res) => {
+    user.history(req.body.user, function (payload) {
+        res.send(payload);
+    });
+});
 
-/* Review section 
-*/
-
+// Review section 
 app.post('/rate', async(req, res) => {
-    await rate.driver(req.body, function (payload) {
+    rate.create(req.body, function (payload) {
+        res.send(payload);
+    });
+});
+
+app.delete('/rate', async(req, res) => {
+    rate.delete(req.body, function (payload) {
         res.send(payload);
     });
 });
@@ -101,85 +102,72 @@ webhooks requiring persistent connections
 */
 
 io.on('connection', async (socket) => {
-  console.log('a user connected');
+    console.log('a user connected');
 
-// User section
-  // Broadcasting user has logged in or out
-  // New user location to be added to the table
-  
-  // user x logging in
-  // Add to either activeDriver | activRider 
-  // broadcast to all sockets in connected with locaiton
-  socket.on('login', (body) => {
-      
-      connected[body.user] = socket;
-      socket.broadcast.emit('login', body);
-      
-  });
+    // User section
+    // Broadcasting user has logged in or out
+    // New user location to be added to the table
 
-// user x logging out
-  // Get rid of user in either activeDriver | activeRider
-  // delete socket connection in connected
-  socket.on('logout', (body) => {
-      
-      if (body.user in connected) {
-          delete connected[body.user];
-          socket.broadcast.emit('logout', body);
-      }
-      
-  });
-
-// Navigation and location management
-
-// user x has refreshed their location
-  // broadcast new location to all sockets in connected
-  socket.on('location', (body) => {
-      
-        socket.broadcast.emit('location', body);
-        
+    // user x logging in
+    // Add to either activeDriver | activeRider 
+    // broadcast to all sockets in connected with locaiton
+    socket.on('login', (body) => {
+        connected[body.user] = socket;
+        socket.broadcast.emit('login', body);
     });
 
-// Booking section
+    // user x logging out
+    // Get rid of user in either activeDriver | activeRider
+    // delete socket connection in connected
+    socket.on('logout', (body) => {
+        if (body.user in connected) {
+            delete connected[body.user];
+            socket.broadcast.emit('logout', body);
+        }
+    });
 
-// User a requests to user b    
+    // Navigation and location management
+    // user x has refreshed their location
+    // broadcast new location to all sockets in connected
+    socket.on('location', (body) => {
+        socket.broadcast.emit('location', body);
+    });
+
+    // Booking section
+
+    // User a requests to user b    
     // socket searches for user b in connected sockets and sends request
     socket.on('request', (body) => {
-        
+
         if (body.driver in connected) {
             connected[body.driver].emit('request', body.passenger);
         }
-        
+
     });
-  
-  // user a cancels the request to user b
+
+    // user a cancels the request to user b
     // search for user b socket in connected and send cancel message
     socket.on('cancel', (body) => {
-        
         if (body.driver in connected) {
             connected[body.driver].emit('cancel', body.passenger);
         }
-        
     });
-    
+
     // user b accepts request
     // add a route if it doesn't exist
     // Then decrease capacity
     socket.on('accept', (body) => {
-        
         if (body.passenger in connected) {
             connected[body.passenger].emit('accept', body.driver);
         }
-        
     });
-    
+
     // user b rejects and sends message to user 
     // search for user a socket and send rejection notice
     socket.on('reject', (body) => {
-        
         if (body.passenger in connected) {
             connected[body.passenger].emit('reject', body.driver);
         }
-        
     });
     
 });
