@@ -33,8 +33,9 @@ const SessionOptions = () => {
                 <TouchableOpacity 
                     onPress={() => navigation.navigate(item.screen)}
                     style={styles.button}
-                    disabled={!origin}
+                    //disabled={!origin}
                 >
+                    
                     <View 
                         style={!origin ? styles.cant_press : styles.none}
                     >
@@ -58,8 +59,8 @@ export default SessionOptions;
 
 const styles = StyleSheet.create({
     image: {
-        width: 120,
-        height: 120,
+        width: 130,
+        height: 130,
         resizeMode: "contain",
 
     },
@@ -79,12 +80,12 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     icon: {
-        backgroundColor: 'grey',
+        backgroundColor: 'purple',
         borderRadius: 100,
         margin: 5,
     },
     cant_press: {
-        opacity: 0.2
+        opacity: 0.99
     },
     none: {
 

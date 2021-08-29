@@ -6,11 +6,11 @@ import { store } from './store';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import GeoLocation from './components/GeoLocation';
 
 /* Screens */
 import HomeScreen from './screens/HomeScreen';
 import RiderScreen from './screens/RiderScreen';
-
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -18,6 +18,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
+      <GeoLocation/>
         <SafeAreaProvider>
           <KeyboardAvoidingView 
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -28,7 +29,7 @@ export default function App() {
               <Stack.Screen 
                 name='HomeScreen'
                 component={HomeScreen}
-                options={{headerShown:false}}
+                options={{headerShown:true}}
               />
               <Stack.Screen 
                 name='RiderScreen'

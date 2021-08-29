@@ -28,6 +28,6 @@ export const { setOrigin, setDestination,
 // Selectors
 export const selectOrigin = (state) => state.session.origin;
 export const selectDestination = (state) => state.session.destination;
-export const selectTravelTimeInfomration = (state) => state.session.travelTimeInfomration;
+export const selectTravelTimeInfomration = (state) => state.session.travelTimeInformation;
 
 export default sessionSlice.reducer;

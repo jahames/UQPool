@@ -6,9 +6,10 @@ import { GOOGLE_MAPS_API_KEY } from "@env";
 import { useDispatch } from "react-redux";
 import { setDestination, setOrigin } from "../slices/sessionSlice"
 
+
 const HomeScreen = () => {
     const dispatch = useDispatch();
-     
+
     return (
         <SafeAreaView style={{backgroundColor:"white", height:"100%"}}>
             <View style={{padding:20}}>
@@ -51,7 +52,7 @@ const HomeScreen = () => {
                     placeholder="Where are you?"
                     nearbyPlacesAPI="GooglePlacesSearch"
                     debounce={400}
-                />
+                 />
 
                 <SessionOptions/>
             </View>
