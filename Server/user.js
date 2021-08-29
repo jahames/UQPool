@@ -4,7 +4,6 @@ module.exports = {
 
     //Creates User
     create(body, result) {
-
         var json = {};
         if (JSON.stringify(body.sid).match(/[!@#\$%\|\}\{\]\[]+/g) != null) {
             console.log("forbidden character in username");
@@ -80,7 +79,7 @@ module.exports = {
     },
 
     //Deletes User
-    delete(user, result) {
+    remove(user, result) {
         var json = {};
         pool.getConnection(function(err, con) {
             con.query("DELETE FROM user WHERE sid='"+user+"';", (err, row) => {

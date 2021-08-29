@@ -1,5 +1,6 @@
 const pool = require('./dbPool')
 
+
 module.exports = {
 
     //Update navigation NOT IMPLEMENTED

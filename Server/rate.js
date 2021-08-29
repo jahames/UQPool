@@ -28,11 +28,11 @@ module.exports = {
         });
     },
       
-    delete(body, result) {
+    remove(user, result) {
 
         var json = {};
         pool.getConnection(function(err, con) {
-            con.query("DELETE FROM rating WHERE sid='"+body.sid+"';", (err, row) => {
+            con.query("DELETE FROM rating WHERE sid='"+user+"';", (err, row) => {
                 if(err) throw err;
                 json.msg = "rating successfully deleted";
                 result(json);

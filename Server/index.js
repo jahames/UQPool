@@ -81,7 +81,7 @@ app.post('/rate', async(req, res) => {
 });
 
 app.delete('/rate', async(req, res) => {
-    rate.delete(req.body, function (payload) {
+    rate.remove(req.body, function (payload) {
         res.send(payload);
     });
 });

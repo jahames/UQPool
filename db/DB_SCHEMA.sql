@@ -2,12 +2,11 @@ DROP TABLE activeDriver;
 DROP TABLE activeRider;
 DROP TABLE destination;
 DROP TABLE history;
-#DROP TABLE market;
+/*DROP TABLE market;*/
 DROP TABLE rating;
 DROP TABLE route;
 DROP TABLE user;
 
-# Add Password
 CREATE TABLE user (
 sid varchar(8) NOT NULL UNIQUE,
 first_name varchar(50) NOT NULL,
@@ -21,7 +20,7 @@ PRIMARY KEY (sid));
 
 CREATE TABLE activeDriver (
 driver_id varchar(8) NOT NULL UNIQUE,
-destination_id INTEGER NOT NULL,
+destination varchar(100) NOT NULL,
 location_lat FLOAT NOT NULL,
 location_long FLOAT NOT NULL,
 capacity INTEGER NOT NULL,
@@ -29,14 +28,14 @@ PRIMARY KEY (driver_id),
 FOREIGN KEY (driver_id) REFERENCES user(sid) ON DELETE CASCADE,
 FOREIGN KEY (destination_id) REFERENCES destination(location_id) ON DELETE CASCADE);
 
-CREATE TABLE activeRider (
+/*CREATE TABLE activeRider (
 rider_id varchar(8) NOT NULL UNIQUE,
-destination_id INTEGER NOT NULL,
+destination varchar(100) NOT NULL,
 pickup_lat FLOAT NOT NULL,
 pickup_long FLOAT NOT NULL,
 PRIMARY KEY (rider_id),
 FOREIGN KEY (rider_id) REFERENCES user(sid) ON DELETE CASCADE,
-FOREIGN KEY (destination_id) REFERENCES destination(location_id) ON DELETE CASCADE);
+FOREIGN KEY (destination_id) REFERENCES destination(location_id) ON DELETE CASCADE);*/
 
 CREATE TABLE destination (
 location_id INTEGER NOT NULL UNIQUE AUTO_INCREMENT,
@@ -58,10 +57,11 @@ rating INTEGER NOT NULL,
 FOREIGN KEY (sid) REFERENCES user(sid) ON DELETE CASCADE);
 
 CREATE TABLE route (
-route_id INTEGER NOT NULL UNIQUE AUTO_INCREMENT,
+route_id INTEGER NOT NULL AUTO_INCREMENT,
 driver_id varchar(8) NOT NULL,
 rider_id varchar(8) NOT NULL,
 route_order INTEGER NOT NULL,
+heuristic INTEGER,
 start_time DATE,
 pickup_time DATE,
 arrive_time DATE,
