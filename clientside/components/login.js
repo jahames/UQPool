@@ -1,9 +1,8 @@
 import   { useSelector, useDispatch }   from   'react-redux'
-import * as React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React, { Component } from 'react';import { Button, Text, View, StyleSheet } from 'react-native';
 import Input from './Input';
 
-export default class Login extends React.Component {
+export default class Login extends Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -12,17 +11,39 @@ export default class Login extends React.Component {
               isLNValid: null,
               isEmailValid: null,
               isPhoneValid: null,
+          sid: '',
+          first_name: '',
+          last_name: '',
+          email: '',
+          phone: ''
       };
       
       this.submitUser = this.submitUser.bind(this);
     }
-    submitUser() {
-        
+    async submitUser() {
+        try {
+        const response = fetch('http://103.4.234.91:7777/user', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: {
+        sid: this.state.sid,
+        first_name: this.state.first_name,
+        last_name: this.state.last_name,
+        email: this.state.email,
+        phone: this.state.phone
+        }
+        });
+        const json = await response.json;
+    } catch (error) {
+      console.log(error);
+    } finally {
+    }
     }
     
   render() {
-    const { isSIDValid, isFNValid, isLNValid, isEmailValid, isPhoneValid } = this.state;
-    console.log('isValid', isValid);
 
     return (
         // Column aligned vertical stack
@@ -102,12 +123,13 @@ export default class Login extends React.Component {
           <Text style={{ color: isPhoneValid && isPhoneValid[0] ? 'green' : 'red' }}>
           </Text>
         </View>
-          
+<button onClick={this.submitUser}>Register</button>;  
                   </View>
     );
   }
 }
 
+// Style
 const styles = StyleSheet.create({
   container: {
     flex: 1,
