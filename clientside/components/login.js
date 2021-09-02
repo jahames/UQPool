@@ -42,7 +42,7 @@ export default class Login extends Component {
         if (json.error != null) {
             // alert the user 
         } else {
-            
+            // Switch to the initial state of the app
         }
     } catch (error) {
       console.log(error);
