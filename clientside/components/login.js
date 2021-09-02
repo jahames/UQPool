@@ -11,6 +11,7 @@ export default class Login extends Component {
               isLNValid: null,
               isEmailValid: null,
               isPhoneValid: null,
+          isUserValid: false,
           sid: '',
           first_name: '',
           last_name: '',
@@ -37,10 +38,24 @@ export default class Login extends Component {
         }
         });
         const json = await response.json;
+        
+        if (json.error != null) {
+            // alert the user 
+        } else {
+            
+        }
     } catch (error) {
       console.log(error);
     } finally {
+        // Just in case required
     }
+    }
+
+/* This section should check that registration was previously successful from the user slice.
+    If so, don't render and just go straight to initial page
+    else render    
+    */
+    componentDidMount() {
     }
     
   render() {
