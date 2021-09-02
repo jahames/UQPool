@@ -37,3 +37,13 @@ When you use a package, ensure that it getts added to the package.json file by r
 ### Versions ###
 1. Node v14.17.4 (LTS)
 2. Tested on Android 11.0x86 Pixel 4
+
+## login form
+
+3 important files (in ./components):
+1. Login.js: contains regular expression validators to tick off all input fields are correct
+2. Input.js: the single/multi pattern validation input component
+3. ./slices/user.js: the persistent user information component (to be written)
+
+The Login.js is a constructor that handles form submission for registration, and holds validators for sid (8 numbers), first and last names (at least one char), email (valid uq domain) and phone (04xxxxxxxx format). On submit, this will send a post request to the server and finalise the login and store the information into the slice if all goes well.
+
