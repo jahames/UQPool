@@ -7,8 +7,6 @@ import { AntDesign } from '@expo/vector-icons';
 //import { StackNavigator, useNavigation } from "react-navigation";
 //import geolocation from "react-native-geolocation-service";
 
-
-
 export class UserScreen extends React.Component {
     state = {
         modalVisible: false,
@@ -75,8 +73,8 @@ export class UserScreen extends React.Component {
                             alignSelf: "flex-start",
                             height: '100%',
                             width: '80%',
-                        }}
-                    >
+                        }}>
+
                         <View
                             style={[
                                 styles.userbox,
