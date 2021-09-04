@@ -1,6 +1,8 @@
 import   { useSelector, useDispatch }   from   'react-redux'
 import React, { Component } from 'react';import { Button, Text, View, StyleSheet } from 'react-native';
 import Input from './Input';
+import { selectSID } from '../slices/UserSlice';
+import { useSelector } from 'react-redux';
 
 export default class Login extends Component {
     constructor(props) {
@@ -56,6 +58,12 @@ export default class Login extends Component {
     else render    
     */
     componentDidMount() {
+        const userSID = useSelector(selectSID);
+        if (userSID != null) {
+            
+        } else {
+            
+        }
     }
     
   render() {
