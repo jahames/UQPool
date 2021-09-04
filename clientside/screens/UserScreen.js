@@ -121,7 +121,7 @@ export class UserScreen extends React.Component {
                                 onPress={() => { this.setModalVisible(!modalVisible); navigate('HistoryScreen') }}
                                 style={styles.buttonNav}
                             >
-                                <AntDesign name="poweroff" size={25} style={styles.powerOff} onPress={() => setModalVisible(true)}></AntDesign>
+                                <AntDesign name="poweroff" size={25} style={styles.powerOff} ></AntDesign>
                             </TouchableOpacity>
                         </View>
 
