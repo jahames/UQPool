@@ -49,6 +49,7 @@ export class UserScreen extends React.Component {
 
         return (
             <View style={{ alignSelf: "flex-start" }} >
+
                 <MapView style={styles.map}
                     //provider={PROVIDER_GOOGLE}
                     //ref={(map) => { this.map = map; }}
@@ -56,11 +57,14 @@ export class UserScreen extends React.Component {
                     showsUserLocation={true}
                     followsUserLocation
                 >
-                    <Marker
+                    {/* <Marker
                         coordinate={this.state.initialLocation}
-                    />
-                    <Ionicons name="menu" size={50} style={styles.button} onPress={() => this.setModalVisible(true)}></Ionicons>
+                    /> */}
+                    <SafeAreaView>
+                        <Ionicons name="menu" size={50} style={styles.button} onPress={() => this.setModalVisible(true)}></Ionicons>
+                    </SafeAreaView>
                 </MapView>
+
                 <Modal
                     transparent={true}
                     visible={modalVisible}
@@ -75,7 +79,7 @@ export class UserScreen extends React.Component {
                             width: '80%',
                         }}>
 
-                        <View
+                        <SafeAreaView
                             style={[
                                 styles.userbox,
                                 { backgroundColor: '#4B2876' },
@@ -85,7 +89,7 @@ export class UserScreen extends React.Component {
                                 <Ionicons name="close" size={38} style={styles.modalButton} ></Ionicons>
                             </Pressable>
 
-                        </View>
+                        </SafeAreaView>
 
                         <View
                             style={[
