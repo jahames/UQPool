@@ -11,10 +11,9 @@ export class UserScreen extends React.Component {
     state = {
         modalVisible: false,
         initialLocation: null,
-        latitude: null,
-        longitude: null,
+        latitude: 0,
+        longitude: 0,
     };
-
     setModalVisible = (visible) => {
         this.setState({ modalVisible: visible });
     };
@@ -57,9 +56,9 @@ export class UserScreen extends React.Component {
                     showsUserLocation={true}
                     followsUserLocation
                 >
-                    {/* <Marker
-                        coordinate={this.state.initialLocation}
-                    /> */}
+                    <Marker
+                        coordinate={{ latitude: this.state.latitude, longitude: this.state.longitude }}
+                    />
                     <SafeAreaView>
                         <Ionicons name="menu" size={50} style={styles.button} onPress={() => this.setModalVisible(true)}></Ionicons>
                     </SafeAreaView>
