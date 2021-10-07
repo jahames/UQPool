@@ -12,6 +12,7 @@ import HomeScreen from './screens/HomeScreen';
 import RiderScreen from './screens/RiderScreen';
 import UserScreen from './screens/UserScreen';
 import HistoryScreen from './screens/HistoryScreen';
+import ChatScreen from './screens/ChatScreen';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -26,6 +27,11 @@ export default function App() {
             keyboardVerticalOffset={Platform.OS === "ios" ? -64 : 0}
           >
             <Stack.Navigator>
+              <Stack.Screen
+                name='ChatScreen'
+                component={ChatScreen}
+                options={{ headerShown: false }}
+              />
               <Stack.Screen
                 name='UserScreen'
                 component={UserScreen}
