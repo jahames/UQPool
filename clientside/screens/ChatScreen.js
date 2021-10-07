@@ -91,7 +91,7 @@ const ChatScreen = () => {
             alwaysShowSend={true}
             renderSend={renderSend}
             renderInputToolbar={renderInputToolbar}
-            bottomOffset={280} //need to check if this work on andriod 
+            bottomOffset={280} //need to check if this work on andriod, change int to 0
         />
 
     );
