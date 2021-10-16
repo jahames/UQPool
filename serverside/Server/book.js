@@ -55,20 +55,20 @@ module.exports = {
                                         last_name: info[0].last_name,
                                         image: info[0].image
                                     }
-                                    drivers.push(driver)
+                                    return driver
                                 }).catch((err) => {
                                         console.log("Could not pass query")
                                         json.msg = "Could not pass query";
                                         reject(json)
                                         console.log(err)
                                     })
+                            }).then(driver => {drivers.push(driver)
                             }).catch((err) => {
                                     console.log("Could not pass query")
                                     json.msg = "Could not pass query";
                                     rej(json)
                                     console.log(err)
                                 })
-                            ETA = await ETA
                         }
                         res(drivers)
                     })
