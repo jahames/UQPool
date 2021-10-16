@@ -42,9 +42,11 @@ module.exports = {
                                         reject(json)
                                         throw err;
                                     }
+                                    console.log("this" + info)
                                     resolve(info)
                             })})
                             queryInfo.then(info => {
+                                console.log(info)
                                 const driver = {
                                     driver_id: rows[i].driver_id, 
                                     registration: rows[i].registration, 
