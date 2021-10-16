@@ -43,7 +43,7 @@ module.exports = {
                                         throw err;
                                     }
                                     resolve(info)
-                            })}).then(driver => {
+                            })}).then(info => {
                                 const driver = {
                                     driver_id: rows[i].driver_id, 
                                     registration: rows[i].registration, 
