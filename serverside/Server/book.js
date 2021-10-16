@@ -29,12 +29,12 @@ module.exports = {
                     let promises = [];
 
                     for (const row of rows) {
-                        promises.push(new Promise((res, rej) => {
+                        promises.push(new Promise(async (res, rej) => {
                             let driverETA = await navigation.getTravelTime(row.location, row.destination);
                             let pickupETA = await navigation.getTravelTime(row.location, body.location);
                             let detourETA = await navigation.getTravelTime(body.location, body.destination) 
                             const heuristic = pickupETA + detourETA - driverETA;
-                            let queryInfo = new Promise((resolve, reject) => {
+                            let queryInfo = new Promise(async (resolve, reject) => {
                                 con.query("select first_name, last_name, image from user where sid='"+row.driver_id+"';", (err, info) => {
                                     if(err) {
                                         console.log("Could not pass query")
