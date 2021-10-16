@@ -63,6 +63,7 @@ module.exports = {
                                         console.log(err)
                                     })
                             }).then(driver => {drivers.push(driver)
+                            console.log(drivers)
                             }).catch((err) => {
                                     console.log("Could not pass query")
                                     json.msg = "Could not pass query";
