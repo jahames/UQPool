@@ -26,59 +26,43 @@ module.exports = {
                 if (rows.length < 1) {
                     console.log("No available drivers");
                 } else {
-                    let data = new Promise((res, rej) => {
+                    let promises = [];
 
-                        const drivers = [];
-
-                        rows.forEach((value, i) => {
-                            let driverETA = navigation.getTravelTime(rows[i].location, rows[i].destination);
-                            let pickupETA = navigation.getTravelTime(rows[i].location, body.location);
-                            let detourETA = navigation.getTravelTime(body.location, body.destination) 
-                            Promise.all([driverETA, pickupETA, detourETA]).then(([driverETA, pickupETA, detourETA]) => {
-                                const heuristic = pickupETA + detourETA - driverETA;
-                                let queryInfo = new Promise((resolve, reject) => {
-                                    con.query("select first_name, last_name, image from user where sid='"+rows[i].driver_id+"';", (err, info) => {
-                                        if(err) {
-                                            console.log("Could not pass query")
-                                            json.msg = "Could not pass query";
-                                            reject(json)
-                                            throw err;
-                                        }
-                                        resolve(info)
-                                    })})
-                                queryInfo.then(info => {
-                                    const driver = {
-                                        driver_id: rows[i].driver_id, 
-                                        registration: rows[i].registration, 
-                                        heuristic: heuristic,
-                                        first_name: info[0].first_name, 
-                                        last_name: info[0].last_name,
-                                        image: info[0].image
-                                    }
-                                    drivers.push(driver)
-                                }).catch((err) => {
+                    for (const row of rows) {
+                        promises.push(new Promise((res, rej) => {
+                            let driverETA = await navigation.getTravelTime(row.location, row.destination);
+                            let pickupETA = await navigation.getTravelTime(row.location, body.location);
+                            let detourETA = await navigation.getTravelTime(body.location, body.destination) 
+                            const heuristic = pickupETA + detourETA - driverETA;
+                            let queryInfo = new Promise((resolve, reject) => {
+                                con.query("select first_name, last_name, image from user where sid='"+row.driver_id+"';", (err, info) => {
+                                    if(err) {
                                         console.log("Could not pass query")
                                         json.msg = "Could not pass query";
                                         reject(json)
-                                        console.log(err)
-                                    })
-                            }).then(res(drivers)
-                            ).catch((err) => {
-                                    console.log("Could not pass query")
-                                    json.msg = "Could not pass query";
-                                    rej(json)
-                                    console.log(err)
-                                })
+                                        throw err;
+                                    }
+                                    resolve(info)
+                                })})
+                            let info = await queryInfo
+                            const driver = {
+                                driver_id: row.driver_id, 
+                                registration: row.registration, 
+                                heuristic: heuristic,
+                                first_name: info[0].first_name, 
+                                last_name: info[0].last_name,
+                                image: info[0].image
+                            }
+                            res(driver)
                         })
-                    })
-                    data.then(drivers => {
+                        )}
+                        drivers = await Promise.all(promises)
                         drivers.sort((first, second) => {
                             first.heuristic - second.heuristic;
                         })
                         console.log(drivers)
                         result(drivers);
                         console.log("Successfully parsed drivers for " + body.sid);
-                    })
                 };
             });
             con.release((err) => {
