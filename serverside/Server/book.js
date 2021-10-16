@@ -9,7 +9,7 @@ module.exports = {
     // rider_id, 
     // location, 
     // destination,
-    bookrequestPickup(result) {
+    requestPickup(result) {
         var json = {};
         pool.getConnection(function(err, con) {
             if(err) {
