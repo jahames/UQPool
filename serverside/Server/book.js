@@ -26,54 +26,61 @@ module.exports = {
                 if (rows.length < 1) {
                     console.log("No available drivers");
                 } else {
-                    let drivers = [];
+                    let data = new Promise((res, rej) => {
 
-                    for (let i = 0; i < rows.length; i++) {
-                        let driverETA = navigation.getTravelTime(rows[i].location, rows[i].destination);
-                        let pickupETA = navigation.getTravelTime(rows[i].location, body.location);
-                        let detourETA = navigation.getTravelTime(body.location, body.destination) 
-                        Promise.all([driverETA, pickupETA, detourETA]).then(([driverETA, pickupETA, detourETA]) => {
-                            const heuristic = pickupETA + detourETA - driverETA;
-                            let queryInfo = new Promise((resolve, reject) => {
-                                con.query("select first_name, last_name, image from user where sid='"+rows[i].driver_id+"';", (err, info) => {
-                                    if(err) {
+                        const drivers = [];
+
+                        for (let i = 0; i < rows.length; i++) {
+                            let driverETA = navigation.getTravelTime(rows[i].location, rows[i].destination);
+                            let pickupETA = navigation.getTravelTime(rows[i].location, body.location);
+                            let detourETA = navigation.getTravelTime(body.location, body.destination) 
+                            Promise.all([driverETA, pickupETA, detourETA]).then(([driverETA, pickupETA, detourETA]) => {
+                                const heuristic = pickupETA + detourETA - driverETA;
+                                let queryInfo = new Promise((resolve, reject) => {
+                                    con.query("select first_name, last_name, image from user where sid='"+rows[i].driver_id+"';", (err, info) => {
+                                        if(err) {
+                                            console.log("Could not pass query")
+                                            json.msg = "Could not pass query";
+                                            reject(json)
+                                            throw err;
+                                        }
+                                        resolve(info)
+                                    })})
+                                queryInfo.then(info => {
+                                    console.log(info)
+                                    const driver = {
+                                        driver_id: rows[i].driver_id, 
+                                        registration: rows[i].registration, 
+                                        heuristic: heuristic,
+                                        first_name: info.first_name, 
+                                        last_name: info.last_name,
+                                        image: info.image
+                                    }
+                                    drivers.push(driver)
+                                    console.log(driver)
+                                }).catch((err) => {
                                         console.log("Could not pass query")
                                         json.msg = "Could not pass query";
-                                        reject(json)
-                                        throw err;
-                                    }
-                                    resolve(info)
-                            })})
-                            queryInfo.then(info => {
-                                let driver = {
-                                    driver_id: rows[i].driver_id, 
-                                    registration: rows[i].registration, 
-                                    heuristic: heuristic,
-                                    first_name: info[0].first_name, 
-                                    last_name: info[0].last_name,
-                                    image: info[0].image
-                                }
-                                drivers.push(driver)
-                                console.log(driver)
+                                        result(json)
+                                        console.log(err)
+                                    })
                             }).catch((err) => {
-                                console.log("Could not pass query")
-                                json.msg = "Could not pass query";
-                                result(json)
-                                console.log(err)
-                            })
-                        }).catch((err) => {
-                                console.log("Could not pass query")
-                                json.msg = "Could not pass query";
-                                result(json)
-                                console.log(err)
-                        })
-                    }
-                    drivers.sort((first, second) => {
-                        first.heuristic - second.heuristic;
+                                    console.log("Could not pass query")
+                                    json.msg = "Could not pass query";
+                                    result(json)
+                                    console.log(err)
+                                })
+                        }
+                        res(drivers)
                     })
-                    console.log(drivers)
-                    result(drivers);
-                    console.log("Successfully parsed drivers for " + body.sid);
+                    data.then(drivers => {
+                        drivers.sort((first, second) => {
+                            first.heuristic - second.heuristic;
+                        })
+                        console.log(drivers)
+                        result(drivers);
+                        console.log("Successfully parsed drivers for " + body.sid);
+                    })
                 };
             });
             con.release((err) => {
