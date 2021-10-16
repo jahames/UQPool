@@ -68,8 +68,9 @@ module.exports = {
                                     rej(json)
                                     console.log(err)
                                 })
+                            ETA = await ETA
                         }
-                        ETA.then(res(drivers))
+                        res(drivers)
                     })
                     data.then(drivers => {
                         drivers.sort((first, second) => {
