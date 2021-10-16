@@ -30,11 +30,11 @@ module.exports = {
 
                         const drivers = [];
 
-                        for (let i = 0; i < rows.length; i++) {
+                        rows.forEach((value, i) => {
                             let driverETA = navigation.getTravelTime(rows[i].location, rows[i].destination);
                             let pickupETA = navigation.getTravelTime(rows[i].location, body.location);
                             let detourETA = navigation.getTravelTime(body.location, body.destination) 
-                            let ETA = Promise.all([driverETA, pickupETA, detourETA]).then(([driverETA, pickupETA, detourETA]) => {
+                            let ETA = await Promise.all([driverETA, pickupETA, detourETA]).then(([driverETA, pickupETA, detourETA]) => {
                                 const heuristic = pickupETA + detourETA - driverETA;
                                 let queryInfo = new Promise((resolve, reject) => {
                                     con.query("select first_name, last_name, image from user where sid='"+rows[i].driver_id+"';", (err, info) => {
@@ -55,23 +55,21 @@ module.exports = {
                                         last_name: info[0].last_name,
                                         image: info[0].image
                                     }
-                                    return driver
+                                    drivers.push(driver)
                                 }).catch((err) => {
                                         console.log("Could not pass query")
                                         json.msg = "Could not pass query";
                                         reject(json)
                                         console.log(err)
                                     })
-                            }).then(driver => {drivers.push(driver)
-                            console.log(drivers)
-                            }).catch((err) => {
+                            }).then(res(drivers)
+                            ).catch((err) => {
                                     console.log("Could not pass query")
                                     json.msg = "Could not pass query";
                                     rej(json)
                                     console.log(err)
                                 })
-                        }
-                        res(drivers)
+                        })
                     })
                     data.then(drivers => {
                         drivers.sort((first, second) => {
