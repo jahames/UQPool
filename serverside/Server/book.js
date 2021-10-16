@@ -32,7 +32,6 @@ module.exports = {
                         let driverETA = navigation.getTravelTime(rows[i].location, rows[i].destination);
                         let pickupETA = navigation.getTravelTime(rows[i].location, body.location);
                         let detourETA = navigation.getTravelTime(body.location, body.destination) 
-                        Promise.all([driverETA, pickupETA, detourETA]).then(response => {
                         Promise.all([driverETA, pickupETA, detourETA]).then(([driverETA, pickupETA, detourETA]) => {
                             const heuristic = pickupETA + detourETA - driverETA;
                             let queryInfo = new Promise((resolve, reject) => {
