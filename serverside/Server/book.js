@@ -42,18 +42,16 @@ module.exports = {
                                         reject(json)
                                         throw err;
                                     }
-                                    console.log("this" + info)
                                     resolve(info)
                             })})
                             queryInfo.then(info => {
-                                console.log(info)
-                                const driver = {
+                                let driver = {
                                     driver_id: rows[i].driver_id, 
                                     registration: rows[i].registration, 
                                     heuristic: heuristic,
-                                    first_name: info.first_name, 
-                                    last_name: info.last_name,
-                                    image: info.image
+                                    first_name: info[0].first_name, 
+                                    last_name: info[0].last_name,
+                                    image: info[0].image
                                 }
                                 drivers.push(driver)
                                 console.log(driver)
