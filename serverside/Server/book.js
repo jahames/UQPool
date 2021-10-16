@@ -51,9 +51,9 @@ module.exports = {
                                         driver_id: rows[i].driver_id, 
                                         registration: rows[i].registration, 
                                         heuristic: heuristic,
-                                        first_name: info[i].first_name, 
-                                        last_name: info[i].last_name,
-                                        image: info[i].image
+                                        first_name: info[0].first_name, 
+                                        last_name: info[0].last_name,
+                                        image: info[0].image
                                     }
                                     drivers.push(driver)
                                 }).catch((err) => {
