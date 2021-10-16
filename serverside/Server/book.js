@@ -47,17 +47,15 @@ module.exports = {
                                         resolve(info)
                                     })})
                                 queryInfo.then(info => {
-                                    console.log(info)
                                     const driver = {
                                         driver_id: rows[i].driver_id, 
                                         registration: rows[i].registration, 
                                         heuristic: heuristic,
-                                        first_name: info.first_name, 
-                                        last_name: info.last_name,
-                                        image: info.image
+                                        first_name: info[i].first_name, 
+                                        last_name: info[i].last_name,
+                                        image: info[i].image
                                     }
                                     drivers.push(driver)
-                                    console.log(driver)
                                 }).catch((err) => {
                                         console.log("Could not pass query")
                                         json.msg = "Could not pass query";
@@ -71,6 +69,7 @@ module.exports = {
                                     console.log(err)
                                 })
                         }
+                        console.log(drivers)
                         res(drivers)
                     })
                     data.then(drivers => {
