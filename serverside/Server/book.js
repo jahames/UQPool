@@ -56,20 +56,21 @@ module.exports = {
                                         image: info[0].image
                                     }
                                     drivers.push(driver)
-                                    console.log(drivers)
                                 }).catch((err) => {
                                         console.log("Could not pass query")
                                         json.msg = "Could not pass query";
-                                        result(json)
+                                        reject(json)
                                         console.log(err)
                                     })
                             }).catch((err) => {
                                     console.log("Could not pass query")
                                     json.msg = "Could not pass query";
-                                    result(json)
+                                    rej(json)
                                     console.log(err)
                                 })
+                            console.log(drivers)
                         }
+                        console.log(drivers)
                         res(drivers)
                     })
                     data.then(drivers => {
