@@ -11,12 +11,12 @@ module.exports = {
     // destination,
     async requestPickup(body, result) {
         var json = {};
-        pool.getConnection(function(err, con) {
+        pool.getConnection(async function(err, con) {
             if(err) {
                 console.log("Could not connect to server")
                 throw err;
             }
-            con.query("SELECT driver_id, registration, location, destination FROM activeDriver;", (err,rows) => {
+            con.query("SELECT driver_id, registration, location, destination FROM activeDriver;", async (err,rows) => {
                 if(err) {
                     console.log("Could not pass query")
                     json.msg = "Could not pass query";
@@ -35,7 +35,7 @@ module.exports = {
                             let detourETA = await navigation.getTravelTime(body.location, body.destination) 
                             const heuristic = pickupETA + detourETA - driverETA;
                             let queryInfo = new Promise(async (resolve, reject) => {
-                                con.query("select first_name, last_name, image from user where sid='"+row.driver_id+"';", (err, info) => {
+                                con.query("select first_name, last_name, image from user where sid='"+row.driver_id+"';", async (err, info) => {
                                     if(err) {
                                         console.log("Could not pass query")
                                         json.msg = "Could not pass query";
