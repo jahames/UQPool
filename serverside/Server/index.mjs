@@ -227,7 +227,7 @@ io.on('connection', async (socket) => {
             console.log("Requesting pickup for rider " + msg.sid);
             book.requestPickup(msg, async function (result) {
                 let payload = await result
-                connected[msg.sid].emit('request', JSON.stringify(payload));
+                connected[msg.sid].emit('get', JSON.stringify(payload));
             });
         } else {
             console.log("That user does not exist");
@@ -239,7 +239,7 @@ io.on('connection', async (socket) => {
         let msg = JSON.parse(body)
         console.log("User " + msg.sid + " is requesting pickup from user" + msg.driver_sid);
         user.getUserForHandshake(msg, function (payload) {
-            connected[msg.driver_sid].emit('ask', JSON.stringify(payload));
+            connected[msg.driver_sid].emit('ask', JSON.stringify({drivers:payload}));
         });
         connected[msg.sid].emit('request', ({msg:"Request to driver sent"}));
     });
