@@ -34,7 +34,7 @@ module.exports = {
                             let driverETA = navigation.getTravelTime(rows[i].location, rows[i].destination);
                             let pickupETA = navigation.getTravelTime(rows[i].location, body.location);
                             let detourETA = navigation.getTravelTime(body.location, body.destination) 
-                            Promise.all([driverETA, pickupETA, detourETA]).then(([driverETA, pickupETA, detourETA]) => {
+                            let ETA = Promise.all([driverETA, pickupETA, detourETA]).then(([driverETA, pickupETA, detourETA]) => {
                                 const heuristic = pickupETA + detourETA - driverETA;
                                 let queryInfo = new Promise((resolve, reject) => {
                                     con.query("select first_name, last_name, image from user where sid='"+rows[i].driver_id+"';", (err, info) => {
@@ -68,10 +68,8 @@ module.exports = {
                                     rej(json)
                                     console.log(err)
                                 })
-                            console.log(drivers)
                         }
-                        console.log(drivers)
-                        res(drivers)
+                        ETA.then(res(drivers))
                     })
                     data.then(drivers => {
                         drivers.sort((first, second) => {
