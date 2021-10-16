@@ -42,17 +42,17 @@ module.exports = {
                                         reject(json)
                                         throw err;
                                     }
-                                    const driver = {
-                                        driver_id: rows[i].driver_id, 
-                                        registration: rows[i].registration, 
-                                        heuristic: heuristic,
-                                        first_name: info.first_name, 
-                                        last_name: info.last_name,
-                                        image: info.image
-                                    }
-                                    console.log("this" +  JSON.stringify(driver))
-                                    resolve(driver)
-                            })}).then(driver => {drivers.push(driver)
+                                    resolve(info)
+                            })}).then(driver => {
+                                const driver = {
+                                    driver_id: rows[i].driver_id, 
+                                    registration: rows[i].registration, 
+                                    heuristic: heuristic,
+                                    first_name: info.first_name, 
+                                    last_name: info.last_name,
+                                    image: info.image
+                                }
+                                drivers.push(driver)
                                 console.log(driver)
                             }).catch((err) => {
                                 console.log("Could not pass query")
