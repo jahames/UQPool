@@ -50,8 +50,10 @@ module.exports = {
                                         last_name: info.last_name,
                                         image: info.image
                                     }
+                                    console.log("this" +  JSON.stringify(driver))
                                     resolve(driver)
                             })}).then(driver => {drivers.push(driver)
+                                console.log(driver)
                             }).catch((err) => {
                                 console.log("Could not pass query")
                                 json.msg = "Could not pass query";
