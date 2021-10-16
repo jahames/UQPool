@@ -56,6 +56,7 @@ module.exports = {
                                         image: info[0].image
                                     }
                                     drivers.push(driver)
+                                    console.log(drivers)
                                 }).catch((err) => {
                                         console.log("Could not pass query")
                                         json.msg = "Could not pass query";
@@ -69,7 +70,6 @@ module.exports = {
                                     console.log(err)
                                 })
                         }
-                        console.log(drivers)
                         res(drivers)
                     })
                     data.then(drivers => {
