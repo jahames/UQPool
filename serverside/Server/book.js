@@ -53,7 +53,7 @@ module.exports = {
                                 last_name: info[0].last_name,
                                 image: info[0].image
                             }
-                            res(JSON.stringify(driver))
+                            res(driver)
                         })
                         )}
                         drivers = await Promise.all(promises)
