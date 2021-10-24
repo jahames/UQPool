@@ -7,6 +7,7 @@ import HomeScreenNavigator from "./HomeScreenNavigator";
 /* Screens */
 import LoginScreen from "../screens/LoginScreen";
 import RegistrationScreen from "../screens/RegistrationScreen";
+import SignInWithSSO from "../screens/SignInWithSSO";
 
 export default function AuthNavigator() {
 	const Stack = createNativeStackNavigator();
@@ -16,12 +17,17 @@ export default function AuthNavigator() {
 			{authentication_token == null ? (
 				<>
 					<Stack.Screen
-						name="LoginScreen"
+						name='SSOScrren'
+						component={SignInWithSSO}
+						options={{ headerShown: false }}
+					/>
+					<Stack.Screen
+						name='LoginScreen'
 						component={LoginScreen}
 						options={{ headerShown: false }}
 					/>
 					<Stack.Screen
-						name="RegistrationScreen"
+						name='RegistrationScreen'
 						component={RegistrationScreen}
 						options={{ headerShown: false }}
 					/>
@@ -29,7 +35,7 @@ export default function AuthNavigator() {
 			) : (
 				<>
 					<Stack.Screen
-						name="Root"
+						name='Root'
 						component={HomeScreenNavigator}
 						options={{ headerShown: false }}
 					/>
@@ -37,5 +43,4 @@ export default function AuthNavigator() {
 			)}
 		</Stack.Navigator>
 	);
-
 }
