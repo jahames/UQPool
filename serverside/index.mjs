@@ -131,10 +131,9 @@ if (process.env.NODE_ENV === "development") {
 
 // Registration section
 app.post("/login", async (req, res) => {
-	console.log("hello");
-	// user.login(req.body, function (payload) {
-	//     res.send(payload);
-	// });
+	user.login(req.body, function (payload) {
+		res.send(payload);
+	});
 });
 
 app.put("/user", async (req, res) => {
@@ -208,141 +207,145 @@ These are a reflection of the user/location/booking/review methods but for
 webhooks requiring persistent connections
 */
 
-io.on('connection', async (socket) => {
+io.on("connection", async (socket) => {
+	// User section
+	// Broadcasting user has logged in or out
+	// New user location to be added to the table
 
-    // User section
-    // Broadcasting user has logged in or out
-    // New user location to be added to the table
+	// user x logging in
+	// Add to either activeDriver | activeRider
+	// broadcast to all sockets in connected with locaiton
+	socket.on("login", (body) => {
+		console.log("HELOO");
 
-    // user x logging in
-    // Add to either activeDriver | activeRider 
-    // broadcast to all sockets in connected with locaiton
-    socket.on('login', (body) => {
-        let log = "None";
-        let msg = JSON.parse(body)
-        if (msg.sid === "undefined") {
-            log = "Failed to add user"
-        } else {
-            connected[msg.sid] = socket;
-            log = "User " + msg.sid + " added"
-        }
-        connected[msg.sid].emit('login', JSON.stringify({log: log}));
-        console.log(log)
-    });
+		let log = "None";
+		let msg = JSON.parse(body);
+		if (msg.sid === "undefined") {
+			log = "Failed to add user";
+		} else {
+			connected[msg.sid] = socket;
+			log = "User " + msg.sid + " added";
+		}
+		connected[msg.sid].emit("login", JSON.stringify({ log: log }));
+		console.log(log);
+	});
 
-    // user x logging out
-    // Get rid of user in either activeDriver | activeRider
-    // delete socket connection in connected
-    socket.on('logout', (body) => {
-        let msg = JSON.parse(body)
-        let user = parseInt(msg.sid)
-        if (user in connected) {
-            delete connected[user];
-            socket.broadcast.emit('logout', body);
-            console.log("User sid:" + user + " logged out");
-        }
-    });
+	// user x logging out
+	// Get rid of user in either activeDriver | activeRider
+	// delete socket connection in connected
+	socket.on("logout", (body) => {
+		let msg = JSON.parse(body);
+		let user = parseInt(msg.sid);
+		if (user in connected) {
+			delete connected[user];
+			socket.broadcast.emit("logout", body);
+			console.log("User sid:" + user + " logged out");
+		}
+	});
 
-    // Navigation and location management
-    // user x has refreshed their location
-    // broadcast new location to all sockets in connected
-    socket.on('location', (body) => {
-        socket.broadcast.emit('location', body);
-    });
+	// Navigation and location management
+	// user x has refreshed their location
+	// broadcast new location to all sockets in connected
+	socket.on("location", (body) => {
+		socket.broadcast.emit("location", body);
+	});
 
-    // Booking section
+	// Booking section
 
-    // User requests a list of potential drivers  
-    socket.on('get', (body, result) => {
-        let msg = JSON.parse(body)
-        if (msg.sid in connected) {
-            console.log("Requesting pickup for rider " + msg.sid);
-            book.requestPickup(msg, async function (result) {
-                let payload = await result
-                connected[msg.sid].emit('get', JSON.stringify({drivers:payload}));
-            });
-        } else {
-            console.log("That user does not exist");
-        };
-    });
+	// User requests a list of potential drivers
+	socket.on("get", (body, result) => {
+		let msg = JSON.parse(body);
+		if (msg.sid in connected) {
+			console.log("Requesting pickup for rider " + msg.sid);
+			book.requestPickup(msg, async function (result) {
+				let payload = await result;
+				connected[msg.sid].emit("get", JSON.stringify({ drivers: payload }));
+			});
+		} else {
+			console.log("That user does not exist");
+		}
+	});
 
-    // User requests a specific driver
-    socket.on('request', (body, request) => {
-        let msg = JSON.parse(body)
-        console.log("User " + msg.sid + " is requesting pickup from user" + msg.driver_id);
-        user.getUser(msg, function (payload) {
-            payload.origin = msg.origin
-            payload.destination = msg.destination
-            connected[parseInt(msg.driver_id)].emit('ask', JSON.stringify(payload));
-        });
-        connected[msg.sid].emit('request', ({msg:"Request to driver sent"}));
-    });
+	// User requests a specific driver
+	socket.on("request", (body, request) => {
+		let msg = JSON.parse(body);
+		console.log(
+			"User " + msg.sid + " is requesting pickup from user" + msg.driver_id
+		);
+		user.getUser(msg, function (payload) {
+			payload.origin = msg.origin;
+			payload.destination = msg.destination;
+			connected[parseInt(msg.driver_id)].emit("ask", JSON.stringify(payload));
+		});
+		connected[msg.sid].emit("request", { msg: "Request to driver sent" });
+	});
 
-    // user a cancels the request to user b
-    // search for user b socket in connected and send cancel message
-    socket.on('cancel', (body, request) => {
+	// user a cancels the request to user b
+	// search for user b socket in connected and send cancel message
+	socket.on("cancel", (body, request) => {
+		if (body.sid in connected) {
+			book.cancelPickup(body, function (payload) {
+				connected[body.driver].emit("cancel", payload);
+			});
+		} else {
+			console.log("That user does not exist");
+		}
+	});
 
-        if (body.sid in connected) {
-            book.cancelPickup(body, function (payload) {
-                connected[body.driver].emit('cancel', payload);
-            });
-        } else {
-            console.log("That user does not exist");
-        };
+	//User has accepted a driver
+	//Add both drivers
+	socket.on("accept", (body, result) => {
+		let msg = JSON.parse(body);
+		connected[msg.driver_id].join(String(msg.driver_id));
+		connected[msg.rider_id].join(String(msg.driver_id));
+		pools[String(msg.driver_id)] = String(msg.driver_id);
+		console.log("pool created for " + msg.driver_id);
+		io.to(pools[String(msg.driver_id)]).emit("join", body);
+	});
 
-    });
+	//Driver
 
-    //User has accepted a driver
-    //Add both drivers 
-    socket.on('accept', (body, result) => {
-        let msg = JSON.parse(body)
-        connected[msg.driver_id].join(String(msg.driver_id));
-        connected[msg.rider_id].join(String(msg.driver_id));
-        pools[String(msg.driver_id)] = String(msg.driver_id)
-	console.log("pool created for " + msg.driver_id)
-        io.to(pools[String(msg.driver_id)]).emit('join', (body))
-   });
+	//Adds a driver to the active driver table
+	socket.on("add", (body) => {
+		let msg = JSON.parse(body);
+		console.log("Adding driver to active drivers: " + msg.sid);
+		book.addDriver(msg, function (payload) {
+			connected[msg.sid].emit("add", JSON.stringify(payload));
+		});
+	});
 
-   //Driver
+	//Removes a driver from the active driver table
+	socket.on("removeDriver", (body) => {
+		let msg = JSON.parse(body);
+		console.log("Removing driver from active drivers: " + msg.sid);
+		book.removeDriver(msg, function (payload) {
+			connected[msg.sid].emit("removeDriver", JSON.stringify(payload));
+		});
+	});
 
-   //Adds a driver to the active driver table
-   socket.on('add', (body) => {
-        let msg = JSON.parse(body)
-        console.log("Adding driver to active drivers: " + msg.sid);
-        book.addDriver(msg, function (payload) {
-            connected[msg.sid].emit('add', JSON.stringify(payload));
-        });
-   });
+	// Pool Messaging Section
+	// Once user is joined to a pool they will use the below socket.io calls to chat
+	// and to update GPS locations
 
-   //Removes a driver from the active driver table
-   socket.on('removeDriver', (body) => {
-    let msg = JSON.parse(body)
-    console.log("Removing driver from active drivers: " + msg.sid);
-    book.removeDriver(msg, function (payload) {
-        connected[msg.sid].emit('removeDriver', JSON.stringify(payload));
-    });
-});
+	//Send message to a pool chat
+	socket.on("sendMessage", (body, request) => {
+		let msg = JSON.parse(body);
+		console.log("Message Sent");
+		console.log(msg);
+		io.to(pools[String(msg.driver_id)]).emit(
+			"sendMessage",
+			JSON.stringify(msg)
+		);
+		console.log(pools[msg.driver_id]);
+	});
 
-   // Pool Messaging Section
-   // Once user is joined to a pool they will use the below socket.io calls to chat
-   // and to update GPS locations
-
-   //Send message to a pool chat
-   socket.on('sendMessage', (body, request) => {
-	let msg = JSON.parse(body)
-	console.log("Message Sent")
-	console.log(msg)
-        io.to(pools[String(msg.driver_id)]).emit("sendMessage", JSON.stringify(msg));
-	console.log(pools[msg.driver_id])
-    });
-
-   socket.on('disconnect', () => {
-        for (const sid in connected){
-            if (connected[user] == socket) {
-                delete connected[socket]
-                console.log(sid + "disconnected")
-            }
-        }
-    })
+	socket.on("disconnect", () => {
+		for (const sid in connected) {
+			if (connected[user] == socket) {
+				delete connected[socket];
+				console.log(sid + "disconnected");
+			}
+		}
+	});
 });
 

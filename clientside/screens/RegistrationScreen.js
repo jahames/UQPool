@@ -12,6 +12,7 @@ import {
 	TouchableOpacity,
 	ScrollView,
 } from "react-native";
+import { SERVER_URL } from "../Config";
 
 /**
  * App's registration screen
@@ -59,7 +60,7 @@ export class RegistrationScreen extends Component {
 		}
 
 		try {
-			const response = await fetch("https://uqpool.xyz:7777/user", {
+			const response = await fetch(`${SERVER_URL}/user`, {
 				method: "POST",
 				headers: {
 					accept: "application/json",
