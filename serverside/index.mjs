@@ -7,32 +7,29 @@ if (!globalThis.fetch) {
 }
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url);
-const env = require('dotenv').config({path:'../../.env'})
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const fs = require('fs');
-const https = require('https');
-const jwt = require('jsonwebtoken');
+require("dotenv").config({ path: "../.env" });
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const fs = require("fs");
+const jwt = require("jsonwebtoken");
 
 // Authenticate tokens before doing requests
 function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    
-    if (token == null) return res.sendStatus(401)
+	const authHeader = req.headers["authorization"];
+	const token = authHeader && authHeader.split(" ")[1];
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, sid) => {
-	console.log(err);
-	if (err) return res.sendStatus(403)
-	req.sid = sid
-	next()
-    })
+	if (token == null) return res.sendStatus(401);
+
+	jwt.verify(token, process.env.TOKEN_SECRET, (err, sid) => {
+		console.log(err);
+		if (err) return res.sendStatus(403);
+		req.sid = sid;
+		next();
+	});
 }
-
-const port = 7777;
 
 // define express
 const app = express();
@@ -43,13 +40,17 @@ app.use(bodyParser.json());
 // enabling CORS for all requests
 app.use(cors());
 // adding morgan to log HTTP requests
-app.use(morgan('combined'));
+app.use(morgan("combined"));
 // serve static files such as images
-app.use(express.static('public'));
+app.use(express.static("public"));
 
-
-if (process.env.NODE_ENC === "production") {
+let server;
+if (process.env.NODE_ENV === "production") {
+	/** PROD ENVIROMENT */
 	console.log("Server running in production mode...");
+
+	const https = require("https");
+	const port = process.env.PORT;
 
 	console.log("Importing TLS/SSL Certificates...");
 	// TLS/SSL Certificates
@@ -73,20 +74,29 @@ if (process.env.NODE_ENC === "production") {
 	};
 
 	// Start the HTTPS servers
-	const httpsServer = https.createServer(credentials, app);
+	server = https.createServer(credentials, app);
 
-	httpsServer.listen(port, (err) => {
+	server.listen(env.port, (err) => {
 		if (err) {
 			return console.log("Error: " + err);
 		}
-		console.log(`HTTPS Server running at http://${hostname}:${hostport}`);
+		console.log(`HTTPS server listening on port ${port}`);
 	});
 } else {
-	const server = app.listen(port, (err) => {
+	// Development enviroment
+	const http = require("http");
+	server = http.createServer(app);
+
+	const port = process.env.PORT;
+	const hostname = "127.0.0.1";
+
+	server = app.listen(port, hostname, (err) => {
 		if (err) {
 			return console.log("Error: ", err);
 		}
-		console.log(`server is listening on ${port}`);
+		console.log(
+			`Developemnt HTTP server is running at http://${hostname}:${port}`
+		);
 	});
 }
 
@@ -111,6 +121,13 @@ scheduling
 rating/review
 rewards
 */
+
+// Debugs
+if (process.env.NODE_ENV === "development") {
+	app.get("/", (req, res) => {
+		res.send("Hello World!");
+	});
+}
 
 // Registration section
 app.post("/login", async (req, res) => {
@@ -184,7 +201,7 @@ app.post("/points", async (req, res) => {
 });
 
 // webhook section
-const io = require('socket.io')(httpsServer);
+const io = require("socket.io")(server);
 
 /* Webhook section
 These are a reflection of the user/location/booking/review methods but for 
