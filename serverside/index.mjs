@@ -17,17 +17,6 @@ const fs = require('fs');
 const https = require('https');
 const jwt = require('jsonwebtoken');
 
-// TLS/SSL Certificates
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/uqpool.xyz/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/uqpool.xyz/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/uqpool.xyz/chain.pem', 'utf8');
-
-const credentials = {
-	key: privateKey,
-	cert: certificate,
-	ca: ca
-};
-
 // Authenticate tokens before doing requests
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization']
@@ -43,7 +32,7 @@ function authenticateToken(req, res, next) {
     })
 }
 
-const httpsPort = 7777;
+const port = 7777;
 
 // define express
 const app = express();
@@ -58,19 +47,59 @@ app.use(morgan('combined'));
 // serve static files such as images
 app.use(express.static('public'));
 
-// Start the HTTPS servers
-const httpsServer = https.createServer(credentials, app);
+
+if (process.env.NODE_ENC === "production") {
+	console.log("Server running in production mode...");
+
+	console.log("Importing TLS/SSL Certificates...");
+	// TLS/SSL Certificates
+	const privateKey = fs.readFileSync(
+		"/etc/letsencrypt/live/uqpool.xyz/privkey.pem",
+		"utf8"
+	);
+	const certificate = fs.readFileSync(
+		"/etc/letsencrypt/live/uqpool.xyz/cert.pem",
+		"utf8"
+	);
+	const ca = fs.readFileSync(
+		"/etc/letsencrypt/live/uqpool.xyz/chain.pem",
+		"utf8"
+	);
+
+	const credentials = {
+		key: privateKey,
+		cert: certificate,
+		ca: ca,
+	};
+
+	// Start the HTTPS servers
+	const httpsServer = https.createServer(credentials, app);
+
+	httpsServer.listen(port, (err) => {
+		if (err) {
+			return console.log("Error: " + err);
+		}
+		console.log(`HTTPS Server running at http://${hostname}:${hostport}`);
+	});
+} else {
+	const server = app.listen(port, (err) => {
+		if (err) {
+			return console.log("Error: ", err);
+		}
+		console.log(`server is listening on ${port}`);
+	});
+}
 
 // end point requires
-const user = require('./user');
-const navigation = require('./navigation');
-const book = require('./book');
-const rate = require('./rate');
-const reward = require('./reward');
+const user = require("./user");
+const navigation = require("./navigation");
+const book = require("./book");
+const rate = require("./rate");
+const reward = require("./reward");
 
 // available users being connected
 var connected = {};
-// Chat rooms for accepted pools 
+// Chat rooms for accepted pools
 var pools = {};
 
 /* Request section:
@@ -84,87 +113,74 @@ rewards
 */
 
 // Registration section
-app.post('/login', async(req, res) => {
-    user.login(req.body, function (payload) {
-        res.send(payload);
-    });
+app.post("/login", async (req, res) => {
+	console.log("hello");
+	// user.login(req.body, function (payload) {
+	//     res.send(payload);
+	// });
 });
 
-app.put('/user', async(req, res) => {
-    user.update(req.body, function (payload) {
-        res.send(payload);
-    });
+app.put("/user", async (req, res) => {
+	user.update(req.body, function (payload) {
+		res.send(payload);
+	});
 });
 
-app.delete('/user', async(req, res) => {
-    user.remove(req.body.user, function (payload) {
-        res.send(payload);
-    });
+app.delete("/user", async (req, res) => {
+	user.remove(req.body.user, function (payload) {
+		res.send(payload);
+	});
 });
 
-app.post('/user', async(req, res) => {
-    user.create(req.body, function (payload) {
-	res.send(payload);
-    });
+app.post("/user", async (req, res) => {
+	user.create(req.body, function (payload) {
+		res.send(payload);
+	});
 });
 
-app.get('/users', authenticateToken, async(req, res) => {
-    user.users(req.body, function (payload) {
-        res.send(payload);
-    });
+app.get("/users", authenticateToken, async (req, res) => {
+	user.users(req.body, function (payload) {
+		res.send(payload);
+	});
 });
 
-app.post('/driver', async(req, res) => {
-    user.driver(req.body, function (payload) {
-        res.send(payload);
-    });
+app.post("/driver", async (req, res) => {
+	user.driver(req.body, function (payload) {
+		res.send(payload);
+	});
 });
 
 // History section
-app.get('/history', async(req, res) => {
-    user.history(req.body.user, function (payload) {
-        res.send(payload);
-    });
+app.get("/history", async (req, res) => {
+	user.history(req.body.user, function (payload) {
+		res.send(payload);
+	});
 });
 
-// Review section 
-app.post('/rate', async(req, res) => {
-    rate.create(req.body, function (payload) {
-        res.send(payload);
-    });
+// Review section
+app.post("/rate", async (req, res) => {
+	rate.create(req.body, function (payload) {
+		res.send(payload);
+	});
 });
 
-app.delete('/rate', async(req, res) => {
-    rate.remove(req.body, function (payload) {
-        res.send(payload);
-    });
+app.delete("/rate", async (req, res) => {
+	rate.remove(req.body, function (payload) {
+		res.send(payload);
+	});
 });
 
 // Rewards Section
-app.get('/rewards', async(req, res) => {
-    reward.getRewards(req.body, function (payload) {
-        res.send(payload);
-    });
+app.get("/rewards", async (req, res) => {
+	reward.getRewards(req.body, function (payload) {
+		res.send(payload);
+	});
 });
 
-app.post('/points', async(req, res) => {
-    reward.getPoints(req.body, function (payload) {
-        res.send(payload);
-    });
-});
-
-/*const server = app.listen(port, (err) => {
-  if (err) {
-      return console.log('Error: ', err);
-  }
-  console.log(`server is listening on ${port}`);
-})*/
-
-httpsServer.listen(httpsPort, (err) => {
-    if (err) {
-        return console.log('Error: ' + err);
-    }
-	console.log('HTTPS Server running on port ' + httpsPort);
+app.post("/points", async (req, res) => {
+	reward.getPoints(req.body, function (payload) {
+		res.send(payload);
+	});
 });
 
 // webhook section
