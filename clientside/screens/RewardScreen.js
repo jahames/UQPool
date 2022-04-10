@@ -15,6 +15,7 @@ import {
 	TouchableOpacity,
 	Alert,
 } from "react-native";
+import { SERVER_URL } from "../Config";
 
 //action when clicking redeem button
 const Redeem = () => {
@@ -62,7 +63,7 @@ const RewardScreen = () => {
 	useEffect(() => {
 		const getRewards = async () => {
 			try {
-				const response = await fetch("https://uqpool.xyz:7777/rewards", {
+				const response = await fetch(`${SERVER_URL}/rewards`, {
 					method: "GET",
 					headers: {
 						accept: "application/json",
