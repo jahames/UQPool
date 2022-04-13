@@ -6,10 +6,11 @@ import { store } from "./store";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import AuthNavigator from "./navigators/AuthNavigator";
+import { SERVER_URL } from "./Config";
 
 // For socket
 import SocketConnection from "./socket.js";
-SocketConnection.init("https://uqpool.xyz:7777");
+SocketConnection.init(SERVER_URL);
 
 export default function App({ navigation }) {
   return (

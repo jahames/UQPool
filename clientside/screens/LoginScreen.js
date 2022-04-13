@@ -29,6 +29,7 @@ import userSlice, {
 } from "../slices/userSlice";
 import SocketConnection from "../socket.js";
 import { LoginFailureAlert } from "../components/alerts/LoginAlert";
+import { SERVER_URL } from "../Config";
 
 function RegistrationButton() {
 	const navigation = useNavigation();
@@ -70,7 +71,7 @@ export class LoginScreen extends Component {
 		}
 
 		try {
-			const response = await fetch("https://uqpool.xyz:7777/login", {
+			const response = await fetch(`${SERVER_URL}/login`, {
 				method: "POST",
 				headers: {
 					accept: "application/json",

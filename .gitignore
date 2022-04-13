@@ -1,0 +1,5 @@
+# gloabl level
+node_modules
+
+# ignore accidental yarns
+/yarn.lock

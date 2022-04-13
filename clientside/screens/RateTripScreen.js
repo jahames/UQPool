@@ -4,6 +4,7 @@ import { Rating } from "react-native-ratings"
 import { useNavigation } from "@react-navigation/core"
 import { selectDriver } from "../slices/sessionSlice";
 import { useSelector } from "react-redux";
+import { SERVER_URL } from "../Config";
 
 
 /* The screen that displays after a trip has ended*/
@@ -12,7 +13,7 @@ const RateTripScreen = () => {
     const driver = useSelector(selectDriver);
 
     async function ratingCompleted(rating, driver) {
-        const postRating = await fetch('https://uqpool.xyz:7777/rate', {
+        const postRating = await fetch(`${SERVER_URL}/rate`, {
             method: 'POST',
             headers: {
                 accept: 'application/json',
