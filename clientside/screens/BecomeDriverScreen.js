@@ -12,6 +12,7 @@ import {
 	TouchableOpacity,
 	ScrollView,
 } from "react-native";
+import { SERVER_URL } from "../Config";
 
 /**Become Driver Screen backend requests,
  * frontend design and data
@@ -47,7 +48,7 @@ class BecomeDriverScreen extends Component {
 		}
 
 		try {
-			const response = await fetch("https://uqpool.xyz:7777/driver", {
+			const response = await fetch(`${SERVER_URL}/driver`, {
 				method: "POST",
 				headers: {
 					accept: "application/json",

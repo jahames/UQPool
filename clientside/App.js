@@ -10,7 +10,7 @@ import { SERVER_URL } from "./Config";
 
 // For socket
 import SocketConnection from "./socket.js";
-SocketConnection.init(`${SERVER_URL}:7777`);
+SocketConnection.init(SERVER_URL);
 
 export default function App({ navigation }) {
   return (

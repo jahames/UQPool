@@ -72,7 +72,7 @@ export default function Map() {
 						console.log(`Duration: ${result.duration} min.`);
 					}}
 					onError={(errorMessage) => {
-						console.log(errorMessage);
+						console.log(errorMessage, apikey);
 					}}
 				/>
 			)}

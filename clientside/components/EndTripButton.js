@@ -17,6 +17,7 @@ import { selectStatus, setStatus } from "../slices/sessionSlice";
 import { UserStatus } from "../enums/UserStatus";
 import fetch from 'node-fetch'; 
 import { useNavigation } from "@react-navigation/core";
+import { SERVER_URL } from "../Config"
 
 
 const EndTripButton = () => {
@@ -43,7 +44,7 @@ const EndTripButton = () => {
                 console.log(err.message)
             });
             if (eta < 2) {
-                const driverPoints = await fetch('https://uqpool.xyz:7777/points', {
+                const driverPoints = await fetch(`${SERVER_URL}:7777/points`, {
                     method: 'POST',
                     headers: {
                         accept: 'application/json',
@@ -54,7 +55,7 @@ const EndTripButton = () => {
                         points: driver.heuristic * 500
                     })
                 });
-                const riderPoints = await fetch('https://uqpool.xyz:7777/points', {
+                const riderPoints = await fetch(`${SERVER_URL}/points`, {
                     method: 'POST',
                     headers: {
                         accept: 'application/json',
